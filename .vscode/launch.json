@@ -1,0 +1,35 @@
+{
+    "version": "0.2.0",
+    "configurations": [ //Para la depuración del código dentro de VSCode
+        {
+            "name": "Debug C Program",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/LightningDetector",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Habilitar soporte de depuración",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "miDebuggerPath": "/usr/bin/gdb",
+            "preLaunchTask": "Build C Program", // Llama al task de compilación antes de ejecutar
+            "miDebuggerArgs": "",
+            "logging": {
+                "moduleLoad": false,
+                "trace": false,
+                "engineLogging": false
+            },
+            "serverStarted": "",
+            "filterStderr": false,
+            "filterStdout": false
+        }
+    ]
+}

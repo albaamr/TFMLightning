@@ -1,0 +1,25 @@
+{
+    "version": "2.0.0", //Para trabajar con el Build proporcionado por vscode
+    "tasks": [
+        {
+            "label": "Build C Program",
+            "type": "shell",
+            "command": "/usr/bin/gcc",
+            "args": [
+                "-g", 
+                "-Wall",
+                "-I", "${workspaceFolder}/include", //Agrega rutas de directorios de cabeceras
+                "-I", "${workspaceFolder}/BME280_SensorAPI", //Cuando añada más sensores, tengo que añadir aquí también las rutas de sus .h
+                //Si más adelante uso sensores con bibliotecas precompiladas, debo indicar las rutas con -L
+                "${workspaceFolder}/src/**/*.c",
+                "-o", "${workspaceFolder}/build/LightningDetector" // El archivo de salida
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "detail": "Compilando el programa C"
+        }
+    ]
+}
