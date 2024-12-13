@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "LightningDetection"  // Incluye la carpeta principal del proyecto
+		},
+		{
+			"path": "LightningDetection/src"  // Agrega la carpeta donde están los archivos .c
+		}
+	],
+	"settings": {
+		"C_Cpp.default.includePath": [
+			"${workspaceFolder}/include",  // Ruta de los headers generales
+			"${workspaceFolder}/BME280_SensorAPI"  // Ruta de los headers de BME280
+		],
+		"C_Cpp.default.compilerPath": "/usr/bin/gcc",  // Ruta del compilador
+		"C_Cpp.default.intelliSenseMode": "linux-gcc-x64",  // Modo de IntelliSense
+		"C_Cpp.default.cStandard": "c17",  // Estándar C
+		"C_Cpp.default.cppStandard": "c++17"  // Estándar C++
+	}
+}
