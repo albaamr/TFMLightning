@@ -39,6 +39,7 @@ int main() {
     int8_t rslt;
     struct bme280_dev dev;
     struct bme280_data comp_data;
+    struct bme280_settings dev_settings;
 
     // Abrir el bus I2C
     int fd = open(I2C_BUS, O_RDWR);
@@ -70,26 +71,27 @@ int main() {
     }
 
     // Configurar los parámetros del sensor
-    dev.settings.osr_h = BME280_OVERSAMPLING_1X;
-    dev.settings.osr_p = BME280_OVERSAMPLING_16X;
-    dev.settings.osr_t = BME280_OVERSAMPLING_2X;
-    dev.settings.filter = BME280_FILTER_COEFF_16;
-    dev.settings.standby_time = BME280_STANDBY_TIME_62_5_MS;
+    dev_settings.osr_h = BME280_OVERSAMPLING_1X;
+    dev_settings.osr_p = BME280_OVERSAMPLING_16X;
+    dev_settings.osr_t = BME280_OVERSAMPLING_2X;
+    dev_settings.filter = BME280_FILTER_COEFF_16;
+    dev_settings.standby_time = BME280_STANDBY_TIME_62_5_MS;
 
-    rslt = bme280_set_sensor_settings(BME280_ALL_SETTINGS_SEL, &dev);
-    if (rslt != BME280_OK) {
-        fprintf(stderr, "Error al configurar el sensor: %d\n", rslt);
-        close(fd);
-        return 1;
-    }
+    //He usado: Ctrl+k y luego Ctrl+C para comentar todo a la vez (Ctrl+U para descomentar)
+    // rslt = bme280_set_sensor_settings(BME280_ALL_SETTINGS_SEL, &dev);
+    // if (rslt != BME280_OK) {
+    //     fprintf(stderr, "Error al configurar el sensor: %d\n", rslt);
+    //     close(fd);
+    //     return 1;
+    // }
 
-    // Configurar el sensor en modo forzado
-    rslt = bme280_set_sensor_mode(BME280_FORCED_MODE, &dev);
-    if (rslt != BME280_OK) {
-        fprintf(stderr, "Error al configurar el modo del sensor: %d\n", rslt);
-        close(fd);
-        return 1;
-    }
+    // // Configurar el sensor en modo forzado
+    // rslt = bme280_set_sensor_mode(BME280_FORCED_MODE, &dev);
+    // if (rslt != BME280_OK) {
+    //     fprintf(stderr, "Error al configurar el modo del sensor: %d\n", rslt);
+    //     close(fd);
+    //     return 1;
+    // }
 
     // Leer los datos del sensor
     dev.delay_us(40000, dev.intf_ptr); // Esperar para obtener los datos

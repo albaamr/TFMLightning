@@ -1,10 +1,10 @@
 {
 	"folders": [
 		{
-			"path": "LightningDetection"  // Incluye la carpeta principal del proyecto
+			"path": "/home/alba/LightningDetection"  // Incluye la carpeta principal del proyecto
 		},
 		{
-			"path": "LightningDetection/src"  // Agrega la carpeta donde están los archivos .c
+			"path": "/home/alba/LightningDetection/src"  // Agrega la carpeta donde están los archivos .c
 		}
 	],
 	"settings": {
@@ -15,6 +15,9 @@
 		"C_Cpp.default.compilerPath": "/usr/bin/gcc",  // Ruta del compilador
 		"C_Cpp.default.intelliSenseMode": "linux-gcc-x64",  // Modo de IntelliSense
 		"C_Cpp.default.cStandard": "c17",  // Estándar C
-		"C_Cpp.default.cppStandard": "c++17"  // Estándar C++
+		"C_Cpp.default.cppStandard": "c++17",
+		"files.associations": {
+			"i2c-dev.h": "c"
+		} // Estándar C++
 	}
 }

@@ -11,7 +11,8 @@
                 "-I", "${workspaceFolder}/include", //Agrega rutas de directorios de cabeceras
                 "-I", "${workspaceFolder}/BME280_SensorAPI", //Cuando añada más sensores, tengo que añadir aquí también las rutas de sus .h
                 //Si más adelante uso sensores con bibliotecas precompiladas, debo indicar las rutas con -L
-                "${workspaceFolder}/src/**/*.c",
+                "${workspaceFolder}/src/SensorAtmosferico.c", // Archivo fuente principal
+                "${workspaceFolder}/BME280_SensorAPI/bme280.c", // Archivo fuente del driver
                 "-o", "${workspaceFolder}/build/LightningDetector" // El archivo de salida
             ],
             "group": {
