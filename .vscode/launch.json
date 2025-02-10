@@ -1,6 +1,7 @@
 {
     "version": "0.2.0",
-    "configurations": [ //Para la depuración del código dentro de VSCode
+    "configurations": [
+         //Para la depuración del código dentro de VSCode
         {
             "name": "Debug C Program",
             "type": "cppdbg",

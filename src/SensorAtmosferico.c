@@ -2,6 +2,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <linux/i2c-dev.h>
+#include <sys/ioctl.h>
 #include "bme280.h"
 
 #define I2C_BUS "/dev/i2c-1" // Ruta del bus I2C
@@ -78,20 +79,20 @@ int main() {
     dev_settings.standby_time = BME280_STANDBY_TIME_62_5_MS;
 
     //He usado: Ctrl+k y luego Ctrl+C para comentar todo a la vez (Ctrl+U para descomentar)
-    // rslt = bme280_set_sensor_settings(BME280_ALL_SETTINGS_SEL, &dev);
-    // if (rslt != BME280_OK) {
-    //     fprintf(stderr, "Error al configurar el sensor: %d\n", rslt);
-    //     close(fd);
-    //     return 1;
-    // }
+    rslt = bme280_set_sensor_settings(BME280_SEL_ALL_SETTINGS, &dev_settings, &dev);
+    if (rslt != BME280_OK) {
+        fprintf(stderr, "Error al configurar el sensor: %d\n", rslt);
+        close(fd);
+        return 1;
+    }
 
-    // // Configurar el sensor en modo forzado
-    // rslt = bme280_set_sensor_mode(BME280_FORCED_MODE, &dev);
-    // if (rslt != BME280_OK) {
-    //     fprintf(stderr, "Error al configurar el modo del sensor: %d\n", rslt);
-    //     close(fd);
-    //     return 1;
-    // }
+    // Configurar el sensor en modo forzado
+    rslt = bme280_set_sensor_mode(BME280_POWERMODE_FORCED, &dev);
+    if (rslt != BME280_OK) {
+        fprintf(stderr, "Error al configurar el modo del sensor: %d\n", rslt);
+        close(fd);
+        return 1;
+    }
 
     // Leer los datos del sensor
     dev.delay_us(40000, dev.intf_ptr); // Esperar para obtener los datos
