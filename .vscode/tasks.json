@@ -13,7 +13,7 @@
                 //Si más adelante uso sensores con bibliotecas precompiladas, debo indicar las rutas con -L
                 "${workspaceFolder}/src/SensorAtmosferico.c", // Archivo fuente principal
                 "${workspaceFolder}/BME280_SensorAPI/bme280.c", // Archivo fuente del driver
-                "-o", "${workspaceFolder}/build/LightningDetector" // El archivo de salida
+                "-o", "${workspaceFolder}/build/LightningDetector2" // El archivo de salida
             ],
             "group": {
                 "kind": "build",

@@ -1,10 +1,10 @@
 {
 	"folders": [
 		{
-			"path": "/home/alba/LightningDetection"  // Incluye la carpeta principal del proyecto
+			"path": "/mnt/LightningDetection"  // Incluye la carpeta principal del proyecto
 		},
 		{
-			"path": "/home/alba/LightningDetection/src"  // Agrega la carpeta donde están los archivos .c
+			"path": "/mnt/LightningDetection/src"  // Agrega la carpeta donde están los archivos .c
 		}
 	],
 	"settings": {

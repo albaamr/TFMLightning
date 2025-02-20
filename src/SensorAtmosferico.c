@@ -6,7 +6,7 @@
 #include "bme280.h"
 
 #define I2C_BUS "/dev/i2c-1" // Ruta del bus I2C
-#define BME280_I2C_ADDR 0x76 // Dirección del BME280 (verificada con `i2cdetect`)
+#define BME280_I2C_ADDR 0x76 // Dirección del BME280 (verificada con `i2cdetect -y 1`)
 
 int8_t i2c_read(uint8_t reg_addr, uint8_t *data, uint16_t len, void *intf_ptr) {
     int fd = *(int *)intf_ptr;
@@ -72,11 +72,11 @@ int main() {
     }
 
     // Configurar los parámetros del sensor
-    dev_settings.osr_h = BME280_OVERSAMPLING_1X;
-    dev_settings.osr_p = BME280_OVERSAMPLING_16X;
+    dev_settings.osr_h = BME280_OVERSAMPLING_8X; //Para decidir cuántas mediciones/ciclo queremos. 
+    dev_settings.osr_p = BME280_OVERSAMPLING_16X; //Promedia x mediciones. A más mediciones, menos ruido
     dev_settings.osr_t = BME280_OVERSAMPLING_2X;
-    dev_settings.filter = BME280_FILTER_COEFF_16;
-    dev_settings.standby_time = BME280_STANDBY_TIME_62_5_MS;
+    dev_settings.filter = BME280_FILTER_COEFF_16; //Filtro IIR. Elimina variaciones rápidas
+    dev_settings.standby_time = BME280_STANDBY_TIME_62_5_MS; //Tiempo entre mediciones
 
     //He usado: Ctrl+k y luego Ctrl+C para comentar todo a la vez (Ctrl+U para descomentar)
     rslt = bme280_set_sensor_settings(BME280_SEL_ALL_SETTINGS, &dev_settings, &dev);
