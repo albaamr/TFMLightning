@@ -8,7 +8,7 @@
 #define I2C_BUS "/dev/i2c-1" // Ruta del bus I2C
 #define BME280_I2C_ADDR 0x76 // Dirección del BME280 (verificada con `i2cdetect -y 1`)
 
-int8_t i2c_read(uint8_t reg_addr, uint8_t *data, uint16_t len, void *intf_ptr) {
+int8_t i2c_read(uint8_t reg_addr, uint8_t *data, uint32_t len, void *intf_ptr) {
     int fd = *(int *)intf_ptr;
     if (write(fd, &reg_addr, 1) != 1) {
         return -1; // Error al escribir la dirección de registro
@@ -19,7 +19,7 @@ int8_t i2c_read(uint8_t reg_addr, uint8_t *data, uint16_t len, void *intf_ptr) {
     return 0;
 }
 
-int8_t i2c_write(uint8_t reg_addr, const uint8_t *data, uint16_t len, void *intf_ptr) {
+int8_t i2c_write(uint8_t reg_addr, const uint8_t *data, uint32_t len, void *intf_ptr) {
     int fd = *(int *)intf_ptr;
     uint8_t buffer[len + 1];
     buffer[0] = reg_addr;
@@ -64,7 +64,7 @@ int main() {
     dev.intf_ptr = &fd;
 
     // Inicializar el sensor
-    rslt = bme280_init(&dev);
+    rslt = bme280_init(&dev); 
     if (rslt != BME280_OK) {
         fprintf(stderr, "Error al inicializar el sensor: %d\n", rslt);
         close(fd);
@@ -72,9 +72,9 @@ int main() {
     }
 
     // Configurar los parámetros del sensor
-    dev_settings.osr_h = BME280_OVERSAMPLING_8X; //Para decidir cuántas mediciones/ciclo queremos. 
+    dev_settings.osr_h = BME280_OVERSAMPLING_16X; //Para decidir cuántas mediciones/ciclo queremos. 
     dev_settings.osr_p = BME280_OVERSAMPLING_16X; //Promedia x mediciones. A más mediciones, menos ruido
-    dev_settings.osr_t = BME280_OVERSAMPLING_2X;
+    dev_settings.osr_t = BME280_OVERSAMPLING_4X;
     dev_settings.filter = BME280_FILTER_COEFF_16; //Filtro IIR. Elimina variaciones rápidas
     dev_settings.standby_time = BME280_STANDBY_TIME_62_5_MS; //Tiempo entre mediciones
 
@@ -93,9 +93,10 @@ int main() {
         close(fd);
         return 1;
     }
+    printf("Datos leídos correctamente\n"); // Mensaje de depuración
 
     // Leer los datos del sensor
-    dev.delay_us(40000, dev.intf_ptr); // Esperar para obtener los datos
+    dev.delay_us(100000, dev.intf_ptr); // Esperar para obtener los datos
     rslt = bme280_get_sensor_data(BME280_ALL, &comp_data, &dev);
     if (rslt != BME280_OK) {
         fprintf(stderr, "Error al leer los datos del sensor: %d\n", rslt);
