@@ -50,7 +50,7 @@ int main() {
     }
 
     // Configurar el dispositivo I2C
-    if (ioctl(fd, I2C_SLAVE, BME280_I2C_ADDR) < 0) {
+    if (ioctl(fd, I2C_SLAVE, BME280_I2C_ADDR) < 0) { //
         perror("Error al configurar la dirección del dispositivo");
         close(fd);
         return 1;
@@ -86,28 +86,32 @@ int main() {
         return 1;
     }
 
-    // Configurar el sensor en modo forzado
-    rslt = bme280_set_sensor_mode(BME280_POWERMODE_FORCED, &dev);
-    if (rslt != BME280_OK) {
-        fprintf(stderr, "Error al configurar el modo del sensor: %d\n", rslt);
-        close(fd);
-        return 1;
-    }
-    printf("Datos leídos correctamente\n"); // Mensaje de depuración
 
-    // Leer los datos del sensor
-    dev.delay_us(100000, dev.intf_ptr); // Esperar para obtener los datos
-    rslt = bme280_get_sensor_data(BME280_ALL, &comp_data, &dev);
-    if (rslt != BME280_OK) {
-        fprintf(stderr, "Error al leer los datos del sensor: %d\n", rslt);
-        close(fd);
-        return 1;
-    }
+    while (1) {
+        
+        // Configurar el sensor en modo forzado. Este modo sólo mide cuando se lo pides y luego vuelve a dormir
+        rslt = bme280_set_sensor_mode(BME280_POWERMODE_FORCED, &dev);
+        if (rslt != BME280_OK) {
+            fprintf(stderr, "Error al configurar el modo del sensor: %d\n", rslt);
+            close(fd);
+            return 1;
+        }
 
-    // Mostrar los datos en la consola
-    printf("Temperatura: %.2f °C\n", comp_data.temperature);
-    printf("Presión: %.2f hPa\n", comp_data.pressure / 100.0);
-    printf("Humedad: %.2f %%\n", comp_data.humidity);
+        // Leer los datos del sensor
+        dev.delay_us(10000000, dev.intf_ptr); // Esperar para obtener los datos
+        rslt = bme280_get_sensor_data(BME280_ALL, &comp_data, &dev);
+        if (rslt != BME280_OK) {
+            fprintf(stderr, "Error al leer los datos del sensor: %d\n", rslt);
+            close(fd);
+            return 1;
+        }
+
+        // Mostrar los datos en la consola
+        printf("Temperatura: %.2f °C\n", comp_data.temperature);
+        printf("Presión: %.2f hPa\n", comp_data.pressure / 100.0);
+        printf("Humedad: %.2f %%\n", comp_data.humidity);
+
+    }
 
     close(fd); // Cerrar el bus I2C
     return 0;

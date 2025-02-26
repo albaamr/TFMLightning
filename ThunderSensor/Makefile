@@ -1,21 +1,22 @@
+NAME ?= ThunderSensor
 # Directorios
 SRC_DIR = src
 INC_DIR = include
-BME280_DIR = BME280_SensorAPI
+THUNDER_DIR = Thunder_click
 BUILD_DIR = build
 
 # Archivos fuente
-SRC_FILES = $(wildcard $(SRC_DIR)/*.c) $(wildcard $(BME280_DIR)/*.c)
+SRC_FILES = $(wildcard $(SRC_DIR)/*.c) $(wildcard $(THUNDER_DIR)/*.c)
 
 # Archivos objeto
 OBJ_FILES = $(SRC_FILES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 
 # Compilador cruzado (ajustado según tu toolchain)
 CC = /opt/cross-pi-gcc.14.2/bin/aarch64-none-linux-gnu-gcc
-CFLAGS = -g -I$(INC_DIR) -I$(BME280_DIR)
+CFLAGS = -g -I$(INC_DIR) -I$(THUNDER_DIR) #-g es para poder depurar
 
 # Ejecutable
-EXEC = $(BUILD_DIR)/SensorAtmosferico
+EXEC = $(BUILD_DIR)/$(NAME) #Puedo poner el nombre de una variable (make name=)
 
 # Regla por defecto: compilar todo
 all: $(BUILD_DIR) $(EXEC)
