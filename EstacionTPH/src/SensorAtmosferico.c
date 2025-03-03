@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include <fcntl.h>
+#include <fcntl.h> //Librería para abrir archivos
 #include <unistd.h>
 #include <linux/i2c-dev.h>
-#include <sys/ioctl.h>
+#include <sys/ioctl.h> //Envío de comandos de control al dispositivo
 #include "bme280.h"
 
 #define I2C_BUS "/dev/i2c-1" // Ruta del bus I2C
