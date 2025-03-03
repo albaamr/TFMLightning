@@ -16,7 +16,8 @@
             "targetArchitecture": "arm",
             "miDebuggerPath": "/opt/cross-pi-gcc.14.2/bin/aarch64-none-linux-gnu-gdb",
             "miDebuggerServerAddress": "192.168.8.199:2345",
-            "program": "EstacionTPH/build/SensorAtmosfericoWhile"
+            "program": "ThunderSensor/build/ThunderSensor"
+            //"program": "EstacionTPH/build/SensorAtmosfericoWhile"
         }
 
     ]

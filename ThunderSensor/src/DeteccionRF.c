@@ -51,7 +51,7 @@ int main() {
     uint8_t gain = spi_read_register(0x00); // Leer registro AFE (Analog Front End) gain. Amlifica y demodula señal AC de la antena. Se cambia en función de si lo usamos en interior/exterior
     printf("Ganancia inicial: 0x%02X\n", gain);
 
-    spi_write_register(0x00, 0x24); // Escribir nuevo valor de ganancia (ejemplo)
+    spi_write_register(0x00, 0x1C); // Escribir nuevo valor de ganancia (ejemplo)
     gain = spi_read_register(0x00);
     printf("Nueva ganancia: 0x%02X\n", gain);
 
