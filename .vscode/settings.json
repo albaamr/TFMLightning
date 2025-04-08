@@ -4,6 +4,8 @@
         "click_thunder_config.h": "c",
         "click_thunder_types.h": "c",
         "fcntl.h": "c",
-        "spidev.h": "c"
+        "spidev.h": "c",
+        "unistd.h": "c",
+        "gpiod.h": "c"
     }
 }

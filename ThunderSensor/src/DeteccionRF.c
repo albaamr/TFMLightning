@@ -5,6 +5,8 @@
 #include <linux/spi/spidev.h>
 #include <sys/ioctl.h> //Envío de comandos de control al dispositivo
 #include <gpiod.h>  // Necesario para la interrupción. Librería para manejo de gpios libgpiod
+
+#include <time.h>
 //Con comillas busca en el propio proyecto
 
 // FUNCIONES, REGISTROS, CONFIG, INTERACCION SENSOR FICHERO APARTE .C aqui no deberia haber referencia a raspberry pi
@@ -21,7 +23,8 @@
 
 #define SPI_BUS "/dev/spidev0.0" // Depende del pin de la raspi. Pin 24 -> dev0.0. Pin 26 -> dev0.1
 #define AS3935_REG_MASK 0x3F      // Solo los 6 bits menos significativos son válidos para direcciones
-#define SPI_SPEED 500000  // fClk entre micro-sensor. Maximo 2 MHz, pero 500 kHz opción segura
+#define SPI_SPEED 1000000  // fClk entre micro-sensor. Maximo 2 MHz, nunca poner 500 kHz (frecuencia de la antena)
+
 
 // Valores registros
 #define DIRECT_COMMAND 0x96      // Comando directo
@@ -86,6 +89,8 @@
 
 
 int spi_fd; //Descriptor de archivo spi
+int n = 0;
+int r = 0; //Contabilizo los rayos
 
 
 // Función para leer un registro del AS3935
@@ -93,7 +98,7 @@ uint8_t spi_read_register(uint8_t reg) {
     //1ºByte: Dirección del registro con la máscara aplicada. 0x40 configura los bits MODE en modo de lectura
     //2ºByte: En SPI se deben enviar datos vacíos para recibir respuesta
     uint8_t tx_buf[2] = { (reg & AS3935_REG_MASK) | 0x40, 0x00 };  
-    uint8_t rx_buf[2] = {0}; //Respuesta del sensor
+    uint8_t rx_buf[2] = {0, 0}; //Respuesta del sensor
     struct spi_ioc_transfer transfer = { //Estructura para transferencia SPI
         .tx_buf = (unsigned long)tx_buf,
         .rx_buf = (unsigned long)rx_buf,
@@ -127,11 +132,28 @@ void spi_write_register(uint8_t reg, uint8_t value) {
 }
 
 void systemInit(struct gpiod_chip **chip, struct gpiod_line **line) //Los asigno como punteros a punteros
-{
+{    
+    uint8_t mode = SPI_MODE_1;
+    uint8_t bits = 8;
+    uint32_t speed = SPI_SPEED;
+
     //-----CONFIGURACIONES-----
     spi_fd = open(SPI_BUS, O_RDWR); //Abrimos bus SPI en modo lectura/escritura
     if (spi_fd < 0) {
         perror("Error al abrir el bus SPI");
+        return;
+    }
+
+    if (ioctl(spi_fd, SPI_IOC_WR_MODE, &mode) < 0) { //Datos muestreados en el flanco de bajada de SCLK (CPHA=1)
+        perror("Error al configurar el modo SPI");
+        return;
+    }
+    if (ioctl(spi_fd, SPI_IOC_WR_BITS_PER_WORD, &bits) < 0) {
+        perror("Error al configurar bits por palabra en SPI");
+        return;
+    }
+    if (ioctl(spi_fd, SPI_IOC_WR_MAX_SPEED_HZ, &speed) < 0) {
+        perror("Error al configurar la velocidad SPI");
         return;
     }
 
@@ -164,6 +186,7 @@ void applicationInit()
     spi_write_register(REG_PRESET_DEFAULT, DIRECT_COMMAND); // Comando de reset
     usleep(2000); // Espera 2ms (datasheet pagina 36)
     spi_write_register(REG_CALIB_RCO, DIRECT_COMMAND); // Comando de calibración RCO
+    spi_write_register(CONFIG_REG_8, 0x00);
 
     printf("CONFIG_REG_1: 0x%02X\n", spi_read_register(CONFIG_REG_1)); //CREO QUE LO QUE SE HACE MAL ES LA LECTURA. ANALIZADOR LÓGICO
 
@@ -198,6 +221,11 @@ void handle_interrupt(struct gpiod_line *line) {
     }
 
     if (value == 1) {
+        
+        time_t t;
+        struct tm *tm_info;
+        char buffer[20];
+
         // Leer el registro 0x03 del AS3935 para saber qué tipo de evento ocurrió
         uint8_t event = spi_read_register(CONFIG_REG_3) & 0x0F;
         uint8_t PRUEBA = spi_read_register(CONFIG_REG_3) & 0x0F;
@@ -208,13 +236,30 @@ void handle_interrupt(struct gpiod_line *line) {
         printf("⚡ Interrupción detectada: "); 
         switch (event) { 
             case 0x01:
-                printf("Ruido demasiado alto ⚠️ (INT_NH)\n");
+
+                //Obtenemos la hora
+                time(&t);
+                tm_info = localtime(&t);
+                strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", tm_info);
+
+                printf("Ruido demasiado alto ⚠️ (INT_NH) - Hora: %s\n", buffer);
                 break;
             case 0x04:
-                printf("Interferencia detectada 🌩 (INT_D)\n");
+                n++;
+                time(&t);
+                tm_info = localtime(&t);
+                strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", tm_info);
+
+                printf("Interferencia detectada 🌩 (INT_D). Evento %i - Hora: %s\n",n,buffer);
                 break;
             case 0x08:
-                printf("¡Rayo detectado! ⚡ (INT_L)\n");
+                //Obtenemos la hora
+                time(&t);
+                tm_info = localtime(&t);
+                strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", tm_info);
+
+                r++;
+                printf("¡Rayo %i detectado! ⚡ (INT_L) - Hora: %s\n", r, buffer);
 
                 // Leer la distancia del rayo desde el registro 0x07
                 uint8_t distancia_raw = spi_read_register(0x07) & 0x3F; // Solo los bits 5:0 son válidos
@@ -227,13 +272,14 @@ void handle_interrupt(struct gpiod_line *line) {
                 
                 break;
             default:
-                printf("Evento desconocido (0x%02X)\n", event);
+                n++;
+                printf("Evento %i desconocido (0x%02X)\n", n, event);
                 printf("DEBERÍA DE SER 0X00 (0x%02X)\n", PRUEBA);
         }
     }
 }
 
-
+////////////////////////////////////////
 
 int main() {
     struct gpiod_chip *chip; //Controlador GPIO
@@ -258,10 +304,11 @@ int main() {
             break;
         }
         handle_interrupt(line); //Analiza la interrupción 
-    }
+    } 
 
     gpiod_line_release(line);
     gpiod_chip_close(chip);
     close(spi_fd); 
     return EXIT_SUCCESS;
 }
+////////////////////////////
