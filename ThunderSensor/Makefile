@@ -9,7 +9,8 @@ LIB_DIR = lib
 
 # Archivos fuente
 #SRC_FILES = $(wildcard $(SRC_DIR)/*.c) $(wildcard $(THUNDER_DIR)/*.c)
-SRC_FILES = $(wildcard $(SRC_DIR)/*.c)
+#SRC_FILES = $(wildcard $(SRC_DIR)/*.c) #Para compilar todos los archivos .c
+SRC_FILES = $(SRC_DIR)/DeteccionRF.c
 
 # Archivos objeto
 OBJ_FILES = $(SRC_FILES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
@@ -43,6 +44,6 @@ $(BUILD_DIR):
 
 # Limpiar archivos generados
 clean:
-	rm -rf $(BUILD_DIR)/*
+	rm -f $(OBJ_FILES) $(EXEC)
 
 .PHONY: all clean

@@ -1,7 +1,7 @@
-#ifndef AS3935_H
-#define AS3935_H
+//#ifndef AS3935_H
+//#define AS3935_H
 
-#include <stdint.h>
+//#include <stdint.h>
 
 /**
  * @file AS3935.h
@@ -18,7 +18,7 @@
  * @param reg Address of the register to read.
  * @return Value read from the register if success; 0xFF if fails.
  */
-uint8_t spi_read_register(uint8_t reg);
+//uint8_t spi_read_register(uint8_t reg);
 
 
-#endif // AS3935_H
+//#endif // AS3935_H

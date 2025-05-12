@@ -91,6 +91,7 @@
 int spi_fd; //Descriptor de archivo spi
 int n = 0;
 int r = 0; //Contabilizo los rayos
+FILE *log_file = NULL; // Puntero global para el archivo de log
 
 
 // Función para leer un registro del AS3935
@@ -182,23 +183,50 @@ void systemInit(struct gpiod_chip **chip, struct gpiod_line **line) //Los asigno
 
 void applicationInit()
 {
+    log_file = fopen("rayos.log", "a");
+    if (!log_file) {
+        perror("Error al abrir el archivo de log");
+    } else {
+        fprintf(log_file, "Inicio de sesión: %s\n", ctime(&(time_t){time(NULL)}));
+        fflush(log_file);
+    }
+
     //-----Calibración y reset-----
     spi_write_register(REG_PRESET_DEFAULT, DIRECT_COMMAND); // Comando de reset
     usleep(2000); // Espera 2ms (datasheet pagina 36)
     spi_write_register(REG_CALIB_RCO, DIRECT_COMMAND); // Comando de calibración RCO
+    usleep(2000);
+
+    //Verificar calibración
+    uint8_t calib_status = spi_read_register(CONFIG_REG_3A);
+    if (calib_status & 0x80) {
+        printf("Calibración RCO exitosa\n");
+        if (log_file) {
+            fprintf(log_file, "Calibración RCO exitosa\n");
+            fflush(log_file);
+        }
+    } else {
+        printf("Error en calibración RCO. Revisa la antena o el sensor.\n");
+        if (log_file) {
+            fprintf(log_file, "Error en calibración RCO\n");
+            fflush(log_file);
+        }
+    }
+
     spi_write_register(CONFIG_REG_8, 0x00);
 
     printf("CONFIG_REG_1: 0x%02X\n", spi_read_register(CONFIG_REG_1)); //CREO QUE LO QUE SE HACE MAL ES LA LECTURA. ANALIZADOR LÓGICO
 
     //-----Configuraciones-----
-    spi_write_register(CONFIG_REG_0, AFE_GAIN_INDOOR | NORMAL_MODE); // Modificación ganancia AFE y modo de operación
+    spi_write_register(CONFIG_REG_0, AFE_GAIN_OUTDOOR | NORMAL_MODE); // Modificación ganancia AFE y modo de operación
+    //spi_write_register(CONFIG_REG_0, AFE_GAIN_OUTDOOR | NORMAL_MODE); 
     uint8_t gain = spi_read_register(CONFIG_REG_0);
     printf("Ganancia AFE: 0x%02X\n", gain);
 
-    spi_write_register(CONFIG_REG_1, CONFIG_NFLT_2 | CONFIG_WDTH_4); //Watchdog threshold y NFL
-    spi_write_register(CONFIG_REG_2, CONFIG_MIN_LIGHT_0 | CONFIG_SREJ_1); //Spike rejection
+    spi_write_register(CONFIG_REG_1, CONFIG_NFLT_4 | CONFIG_WDTH_5); //Watchdog threshold y NFL
+    spi_write_register(CONFIG_REG_2, CONFIG_MIN_LIGHT_0 | CONFIG_SREJ_3); //Spike rejection
 
-    //spi_write_register(CONFIG_REG_3, spi_read_register(CONFIG_REG_3) | 0x20); //Habilida MASK_DIST para ignorar interferencias
+    spi_write_register(CONFIG_REG_3, spi_read_register(CONFIG_REG_3) | 0x20); //Habilida MASK_DIST para ignorar interferencias
     spi_write_register(CONFIG_REG_8, 0x00);
 
     //------Trazas de comprobaciones----------
@@ -233,48 +261,46 @@ void handle_interrupt(struct gpiod_line *line) {
             usleep(1000); 
         } while (gpiod_line_get_value(line) == 1); //Compruebo que IRQ vuelve a 0 después de haber leído el registro de interrupción
 
+
+        time(&t);
+        tm_info = localtime(&t);
+        strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", tm_info);
+
         printf("⚡ Interrupción detectada: "); 
-        switch (event) { 
-            case 0x01:
+        if (log_file) {
+            switch (event) { 
+                case 0x01:
+                    printf("Ruido demasiado alto ⚠️ (INT_NH) - Hora: %s\n", buffer);
+                    fprintf(log_file, "%s - Ruido alto (INT_NH)\n", buffer);
+                    break;
+                case 0x04:
+                    n++;
+                    printf("Interferencia detectada 🌩 (INT_D). Evento %i - Hora: %s\n",n,buffer);
+                    fprintf(log_file, "%s - Interferencia (INT_D), Evento %i\n", buffer, n);
+                    break;
+                case 0x08:
+                    r++;
 
-                //Obtenemos la hora
-                time(&t);
-                tm_info = localtime(&t);
-                strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", tm_info);
+                    uint8_t distancia_raw = spi_read_register(0x07) & 0x3F;
+                    fprintf(log_file, "%s - Rayo detectado (INT_L), Rayo %i, Distancia: %d km\n", buffer, r, distancia_raw == 0x3F ? -1 : distancia_raw);
+                    printf("¡Rayo %i detectado! ⚡ (INT_L) - Hora: %s\n", r, buffer);
 
-                printf("Ruido demasiado alto ⚠️ (INT_NH) - Hora: %s\n", buffer);
-                break;
-            case 0x04:
-                n++;
-                time(&t);
-                tm_info = localtime(&t);
-                strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", tm_info);
+                    // Leer la distancia del rayo desde el registro 0x07
+                    //uint8_t distancia_raw = spi_read_register(0x07) & 0x3F; // Solo los bits 5:0 son válidos
 
-                printf("Interferencia detectada 🌩 (INT_D). Evento %i - Hora: %s\n",n,buffer);
-                break;
-            case 0x08:
-                //Obtenemos la hora
-                time(&t);
-                tm_info = localtime(&t);
-                strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", tm_info);
-
-                r++;
-                printf("¡Rayo %i detectado! ⚡ (INT_L) - Hora: %s\n", r, buffer);
-
-                // Leer la distancia del rayo desde el registro 0x07
-                uint8_t distancia_raw = spi_read_register(0x07) & 0x3F; // Solo los bits 5:0 son válidos
-
-                if (distancia_raw == 0x3F) { // 0x3F significa "fuera de rango"
-                    printf("Distancia: Fuera de rango (>40 km)\n");
-                } else {
-                    printf("Distancia estimada: %d km\n", distancia_raw);
-                }
-                
-                break;
-            default:
-                n++;
-                printf("Evento %i desconocido (0x%02X)\n", n, event);
-                printf("DEBERÍA DE SER 0X00 (0x%02X)\n", PRUEBA);
+                    if (distancia_raw == 0x3F) { // 0x3F significa "fuera de rango"
+                        printf("Distancia: Fuera de rango (>40 km)\n");
+                    } else {
+                        printf("Distancia estimada: %d km\n", distancia_raw);
+                    }
+                    
+                    break;
+                default:
+                    n++;
+                    printf("Evento %i desconocido (0x%02X)\n", n, event);
+                    fprintf(log_file, "%s - Evento desconocido (0x%02X), Evento %i\n", buffer, event, n);
+            }
+            fflush(log_file);
         }
     }
 }
@@ -306,6 +332,10 @@ int main() {
         handle_interrupt(line); //Analiza la interrupción 
     } 
 
+    if (log_file) {
+        fprintf(log_file, "Fin de sesión: %s\n", ctime(&(time_t){time(NULL)}));
+        fclose(log_file);
+    }
     gpiod_line_release(line);
     gpiod_chip_close(chip);
     close(spi_fd); 

@@ -6,6 +6,7 @@
  * @date 
  */
 
+ /*
 #include <fcntl.h>
 #include <unistd.h>
 #include <linux/spi/spidev.h>
@@ -22,3 +23,4 @@
 static int spi_fd;
 
 
+*/

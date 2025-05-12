@@ -1,4 +1,4 @@
-#ifndef RASPI_H
+/*#ifndef RASPI_H
 #define RASPI_H
 
 #include <gpiod.h>
@@ -9,3 +9,4 @@
 //DECLARAR FUNCIONES DE LA RASPI
 
 #endif // RASPI_H
+*/
