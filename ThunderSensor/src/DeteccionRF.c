@@ -95,7 +95,7 @@ FILE *log_file = NULL; // Puntero global para el archivo de log
 
 
 // Función para leer un registro del AS3935
-uint8_t spi_read_register(uint8_t reg) {
+uint8_t spi_read_register(uint8_t reg) { //AS3935.h
     //1ºByte: Dirección del registro con la máscara aplicada. 0x40 configura los bits MODE en modo de lectura
     //2ºByte: En SPI se deben enviar datos vacíos para recibir respuesta
     uint8_t tx_buf[2] = { (reg & AS3935_REG_MASK) | 0x40, 0x00 };  
@@ -117,13 +117,13 @@ uint8_t spi_read_register(uint8_t reg) {
 }
 
 // Función para escribir en un registro del AS3935
-void spi_write_register(uint8_t reg, uint8_t value) {
+void spi_write_register(uint8_t reg, uint8_t value) { //AS3935.h
     //1ºByte: Dirección del registro con la máscara aplicada. 0x00 configura los bits MODE en modo de escritura/comando (VER DATASHEET)
     uint8_t tx_buf[2] = { (reg & AS3935_REG_MASK) | 0x00, value };
     struct spi_ioc_transfer transfer = {
         .tx_buf = (unsigned long)tx_buf,
         .len = 2,
-        .speed_hz = 500000,
+        .speed_hz = SPI_SPEED,
         .bits_per_word = 8,
     };
     if (ioctl(spi_fd, SPI_IOC_MESSAGE(1), &transfer) < 0) {
@@ -181,7 +181,7 @@ void systemInit(struct gpiod_chip **chip, struct gpiod_line **line) //Los asigno
     usleep(200000); // Espera 200ms (como en codigo de ejemplo)
 }
 
-void applicationInit()
+void applicationInit() //AS3935.h
 {
     log_file = fopen("rayos.log", "a");
     if (!log_file) {
