@@ -1,6 +1,7 @@
 # Ignora
 .vscode/
 ThunderSensor/Thunder_click/
+ThunderSensor/old/
 ThunderSensor/build/*.o
 
 EstacionTPH/.vscode/
