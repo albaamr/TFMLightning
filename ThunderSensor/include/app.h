@@ -6,12 +6,13 @@
  * @brief Header for app.c
  * @author Alba Moreno Ramos
  * @version 0.1
- * @date 
+ * @date 21-05-2025
  */
 
 /**
  * @brief Main system logic.
+ * @return int System exit code (EXIT_SUCCESS or EXIT_FAILURE).
  */
-void run_app(void);
+int run_lightning_detection(void);
 
 #endif // APP_H

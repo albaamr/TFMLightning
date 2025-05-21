@@ -3,7 +3,7 @@
  * @brief Communication functions with the AS3935 sensor via spi.
  *
  * @author Alba Moreno Ramos
- * @date 
+ * @date 21-05-2025
  */
  
 #include <unistd.h>
@@ -56,13 +56,7 @@
 #define CONFIG_MIN_LIGHT_2 0x02 //Default
 #define CONFIG_MIN_LIGHT_3 0x03
 
-#define REG_CALIB_RCO 0x3D
-#define REG_PRESET_DEFAULT 0x3C
-
-int spi_fd;
-FILE *log_file = NULL;
-
-uint8_t spi_read_register(uint8_t reg) { 
+int spi_read_register(struct SystemState *state, uint8_t reg, uint8_t *value) { 
     uint8_t tx_buf[2] = { (reg & AS3935_REG_MASK) | AS3935_READ_MODE, 0x00 };  
     uint8_t rx_buf[2] = {0, 0}; 
     struct spi_ioc_transfer transfer = {
@@ -73,15 +67,16 @@ uint8_t spi_read_register(uint8_t reg) {
         .bits_per_word = 8,
     };
     
-    if (ioctl(spi_fd, SPI_IOC_MESSAGE(1), &transfer) < 0) {
-        perror("Error en comunicación SPI");
-        return 0xFF;
+    if (ioctl(state->spi_fd, SPI_IOC_MESSAGE(1), &transfer) < 0) {
+        perror("Failed to read SPI register");
+        return -1;
     }
     
-    return rx_buf[1];
+    *value = rx_buf[1];
+    return 0;
 }
 
-void spi_write_register(uint8_t reg, uint8_t value) {
+int spi_write_register(struct SystemState *state, uint8_t reg, uint8_t value) {
     uint8_t tx_buf[2] = { (reg & AS3935_REG_MASK) | AS3935_WRITE_MODE, value };
     struct spi_ioc_transfer transfer = {
         .tx_buf = (unsigned long)tx_buf,
@@ -89,49 +84,65 @@ void spi_write_register(uint8_t reg, uint8_t value) {
         .speed_hz = SPI_SPEED,
         .bits_per_word = 8,
     };
-    if (ioctl(spi_fd, SPI_IOC_MESSAGE(1), &transfer) < 0) {
-        perror("Error en comunicación SPI");
-        return;
+    if (ioctl(state->spi_fd, SPI_IOC_MESSAGE(1), &transfer) < 0) {
+        perror("Failed to write SPI register");
+        return -1;
     }
+
+    return 0;
 }
 
-void applicationInit()
+int as3935_init(struct SystemState *state)
 {
-    log_file = fopen("rayos.log", "a");
-    if (!log_file) {
-        perror("Error al abrir el archivo de log");
-    } else {
-        fprintf(log_file, "\n--------\nInicio de sesión: %s\n", ctime(&(time_t){time(NULL)}));
-        fflush(log_file);
+    if (state->log_file == NULL) {
+        state->log_file = fopen("rayos.log", "a");
+        if (!state->log_file) {
+            perror("Failed to open log file");
+            return -1;
+        }
     }
 
-    spi_write_register(REG_PRESET_DEFAULT, DIRECT_COMMAND);
+    char buffer[20];
+    log_timestamp(buffer, sizeof(buffer));
+    fprintf(state->log_file, "\n--------\nSession start: %s\n", buffer);
+    fflush(state->log_file);
+
+    if (spi_write_register(state, REG_PRESET_DEFAULT, DIRECT_COMMAND) < 0) return -1;
     usleep(DELAY_2MS);
-    spi_write_register(REG_CALIB_RCO, DIRECT_COMMAND);
+    if (spi_write_register(state, REG_CALIB_RCO, DIRECT_COMMAND) < 0) return -1;
     usleep(DELAY_2MS);
 
-    uint8_t calib_TRCO_status = spi_read_register(CONFIG_REG_3A);
-    uint8_t calib_SRCO_status = spi_read_register(CONFIG_REG_3B);
+    uint8_t calib_TRCO_status, calib_SRCO_status;
+    if (spi_read_register(state, CONFIG_REG_3A, &calib_TRCO_status) < 0 ||
+        spi_read_register(state, CONFIG_REG_3B, &calib_SRCO_status) < 0) {
+        return -1;
+    }
+
     if ((calib_TRCO_status & 0x80) && (calib_SRCO_status & 0x80)) {
-        printf("Calibración RCO exitosa\n");
-        if (log_file) {
-            fprintf(log_file, "Calibración RCO exitosa\n");
-            fflush(log_file);
-        }
+        printf("RC0 calibration successful\n");
+        fprintf(state->log_file, "RC0 calibration successful\n");
+        fflush(state->log_file);
     } else {
-        printf("Error en calibración RCO. Revisa la antena o el sensor.\n");
-        if (log_file) {
-            fprintf(log_file, "Error en calibración RCO\n");
-            fflush(log_file);
-        }
+        printf("RC0 calibration failed. Check antenna or sensor.\n");
+        fprintf(state->log_file, "RC0 calibration failed\n");
+        fflush(state->log_file);
+        return -1;
     }
 
-    spi_write_register(CONFIG_REG_0, AFE_GAIN_OUTDOOR | NORMAL_MODE);
-    spi_write_register(CONFIG_REG_1, CONFIG_NFLT_4 | CONFIG_WDTH_5);
-    spi_write_register(CONFIG_REG_2, CONFIG_MIN_LIGHT_0 | CONFIG_SREJ_3);
-    spi_write_register(CONFIG_REG_3, spi_read_register(CONFIG_REG_3) | 0x20);
+    // Configure sensor for outdoor operation with specific noise and watchdog settings
+    if (spi_write_register(state, CONFIG_REG_0, AFE_GAIN_OUTDOOR | NORMAL_MODE) < 0 ||
+        spi_write_register(state, CONFIG_REG_1, CONFIG_NFLT_4 | CONFIG_WDTH_5) < 0 ||
+        spi_write_register(state, CONFIG_REG_2, CONFIG_MIN_LIGHT_0 | CONFIG_SREJ_3) < 0) {
+        return -1;
+    }
+
+    uint8_t reg3_value;
+    if (spi_read_register(state, CONFIG_REG_3, &reg3_value) < 0 ||
+        spi_write_register(state, CONFIG_REG_3, reg3_value | 0x20) < 0) {
+        return -1;
+    }
 
     usleep(DELAY_300MS);
-    printf("Sistema inicializado\n");
+    printf("System initialized\n");
 
 }
