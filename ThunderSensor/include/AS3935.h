@@ -5,6 +5,7 @@
 #include <linux/spi/spidev.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
+#include <stdio.h>
 
 /**
  * @file AS3935.h
@@ -46,6 +47,14 @@ struct SystemState {
     int spi_fd;
     FILE *log_file;
 };
+
+/**
+ * @brief Formats current timestamp into a buffer.
+ * 
+ * @param buffer Buffer to store the formatted timestamp.
+ * @param size Size of the buffer.
+ */
+void log_timestamp(char *buffer, size_t size);
 
 /**
  * @brief Reads a register from the AS3935 sensor via spi.

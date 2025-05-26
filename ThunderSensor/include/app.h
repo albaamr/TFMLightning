@@ -9,6 +9,7 @@
  * @date 21-05-2025
  */
 
+ 
 /**
  * @brief Main system logic.
  * @return int System exit code (EXIT_SUCCESS or EXIT_FAILURE).

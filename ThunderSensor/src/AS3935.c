@@ -130,8 +130,8 @@ int as3935_init(struct SystemState *state)
     }
 
     // Configure sensor for outdoor operation with specific noise and watchdog settings
-    if (spi_write_register(state, CONFIG_REG_0, AFE_GAIN_OUTDOOR | NORMAL_MODE) < 0 ||
-        spi_write_register(state, CONFIG_REG_1, CONFIG_NFLT_4 | CONFIG_WDTH_5) < 0 ||
+    if (spi_write_register(state, CONFIG_REG_0, AFE_GAIN_INDOOR | NORMAL_MODE) < 0 ||
+        spi_write_register(state, CONFIG_REG_1, CONFIG_NFLT_1 | CONFIG_WDTH_2) < 0 ||
         spi_write_register(state, CONFIG_REG_2, CONFIG_MIN_LIGHT_0 | CONFIG_SREJ_3) < 0) {
         return -1;
     }

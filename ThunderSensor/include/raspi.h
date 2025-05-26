@@ -2,6 +2,7 @@
 #define RASPI_H
 
 #include <gpiod.h>
+#include "AS3935.h"
 
 /**
  * @file raspi.h
@@ -13,6 +14,14 @@
 
 #define GPIO_CHIP "/dev/gpiochip0"
 #define GPIO_IRQ 17 /**< GPIO pin used for AS3935 interrupt */
+
+/**
+ * @brief Structure to track event counts.
+ */
+struct EventCounters {
+    int noise_count;
+    int lightning_count;
+};
 
 /**
  * @brief Initialises SPI system and GPIO for interrupts.
@@ -33,14 +42,6 @@ int systemInit(struct SystemState *state, struct gpiod_chip **chip, struct gpiod
  * @return 0 on success, -1 on failure.
  */
 int handle_interrupt(struct SystemState *state, struct gpiod_line *line, struct EventCounters *counters);
-
-/**
- * @brief Structure to track event counts.
- */
-struct EventCounters {
-    int noise_count;
-    int lightning_count;
-};
 
 /**
  * @brief Formats current timestamp into a buffer.
