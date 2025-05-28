@@ -1,10 +1,6 @@
 # Ignora
-.vscode/
-ThunderSensor/Thunder_click/
-ThunderSensor/old/
-ThunderSensor/build/*.o
+build/
+*.gcda
+*.gcno
 
-EstacionTPH/.vscode/
-EstacionTPH/src/.vscode/
-EstacionTPH/BME280_SensorAPI/
-EstacionTPH/build/*.o
+ThunderSensor/
