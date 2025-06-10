@@ -100,9 +100,9 @@
     - +:test/**
     - -:test/support
   :source:
-    - src/**
+    - ../src/**
   :include:
-    - src/** # In simple projects, this entry often duplicates :source
+    - ../include/** # In simple projects, this entry often duplicates :source
   :support:
     - test/support
   :libraries: []

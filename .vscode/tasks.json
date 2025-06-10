@@ -1,0 +1,69 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Ceedling clobber",
+            "type": "process",
+            "options": {
+                "cwd": "${workspaceRoot}/ceedling"
+            },
+            "command": "ceedling",
+            "args": [
+                "clobber"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Ceedling view coverage",
+            "type": "process",
+            "options": {
+                "cwd": "${workspaceRoot}/ceedling"
+            },
+            "osx": {
+                "command": "open"
+            },
+            "linux": {
+                "command": "xdg-open"
+            },
+            "windows": {
+                "command": "start"
+            },
+            "args": [
+                "build/artifacts/gcov/GcovCoverageResults.html"
+            ],
+            "dependsOn": [
+                "Ceedling coverage"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Ceedling test:all",
+            "type": "process",
+            "options": {
+                "cwd": "${workspaceRoot}/ceedling"
+            },
+            "group": "test",
+            "command": "ceedling",
+            "args": [
+                "test:all"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Ceedling coverage",
+            "options": {
+                "cwd": "${workspaceRoot}/ceedling"
+            },
+            "group": {
+                "kind": "test"
+            },
+            "command": "ceedling",
+            "args": [
+                "gcov:all",
+                "utils:gcov"
+            ],
+            "dependsOn":["Ceedling clobber"],
+            "problemMatcher": []
+        }
+    ]
+}

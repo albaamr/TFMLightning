@@ -1,0 +1,14 @@
+{
+    "ceedlingExplorer.problemMatching": {
+        "mode": "gcc"
+    },
+    "ceedlingExplorer.debugConfiguration": "Ceedling - Debug test",
+    "ceedlingExplorer.prettyTestLabel": true,
+    "ceedlingExplorer.projectPath": "./ceedling",
+    "files.associations": {
+        "fsm.h": "c",
+        "as3935.h": "c",
+        "stdio.h": "c",
+        "raspi.h": "c"
+    },
+}

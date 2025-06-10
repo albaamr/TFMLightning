@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <time.h>
 #include "AS3935.h"
+#include "log.h"
 
 #define NORMAL_MODE 0x00
 #define POWERDOWN_MODE 0x01
@@ -56,7 +57,7 @@
 #define CONFIG_MIN_LIGHT_2 0x02 //Default
 #define CONFIG_MIN_LIGHT_3 0x03
 
-int spi_read_register(struct SystemState *state, uint8_t reg, uint8_t *value) { 
+int __attribute__((weak)) spi_read_register(struct SystemState *state, uint8_t reg, uint8_t *value) { 
     uint8_t tx_buf[2] = { (reg & AS3935_REG_MASK) | AS3935_READ_MODE, 0x00 };  
     uint8_t rx_buf[2] = {0, 0}; 
     struct spi_ioc_transfer transfer = {
@@ -76,7 +77,7 @@ int spi_read_register(struct SystemState *state, uint8_t reg, uint8_t *value) {
     return 0;
 }
 
-int spi_write_register(struct SystemState *state, uint8_t reg, uint8_t value) {
+int __attribute__((weak)) spi_write_register(struct SystemState *state, uint8_t reg, uint8_t value) {
     uint8_t tx_buf[2] = { (reg & AS3935_REG_MASK) | AS3935_WRITE_MODE, value };
     struct spi_ioc_transfer transfer = {
         .tx_buf = (unsigned long)tx_buf,
