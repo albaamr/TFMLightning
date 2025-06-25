@@ -9,7 +9,7 @@
 :project:
   # how to use ceedling. If you're not sure, leave this as `gem` and `?`
   :which_ceedling: gem
-  :ceedling_version: 1.0.1
+  :ceedling_version: 0.31.1
 
   # optional features. If you don't need them, keep them turned off for performance
   :use_mocks: TRUE
@@ -54,44 +54,18 @@
 :plugins:
   :load_paths: []
   :enabled:
-    #- beep                           # beeps when finished, so you don't waste time waiting for ceedling
-    - module_generator                # handy for quickly creating source, header, and test templates
-    #- gcov                           # test coverage using gcov. Requires gcc, gcov, and a coverage analyzer like gcovr
-    #- bullseye                       # test coverage using bullseye. Requires bullseye for your platform
-    #- command_hooks                  # write custom actions to be called at different points during the build process
-    #- compile_commands_json_db       # generate a compile_commands.json file
-    #- dependencies                   # automatically fetch 3rd party libraries, etc.
-    #- subprojects                    # managing builds and test for static libraries
-    #- fake_function_framework        # use FFF instead of CMock
+    - module_generator
+    - stdout_pretty_tests_report
+    - xml_tests_report
+    - gcov
+:xml_tests_report:
+  :artifact_filename: report.xml
 
-    # Report options (You'll want to choose one stdout option, but may choose multiple stored options if desired)
-    #- report_build_warnings_log
-    #- report_tests_gtestlike_stdout
-    #- report_tests_ide_stdout
-    #- report_tests_log_factory
-    - report_tests_pretty_stdout
-    #- report_tests_raw_output_log
-    #- report_tests_teamcity_stdout
-
-# Specify which reports you'd like from the log factory
-:report_tests_log_factory:
-  :reports:
-    - json 
-    - junit 
-    - cppunit 
-    - html 
-
-# override the default extensions for your system and toolchain
 :extension:
-  #:header: .h
-  #:source: .c
-  #:assembly: .s
-  #:dependencies: .d
-  #:object: .o
   :executable: .out
-  #:testpass: .pass
-  #:testfail: .fail
-  #:subprojects: .a
+  :testpass: .pass
+  :testfail: .fail
+  :subprojects: .a
 
 # This is where Ceedling should look for your source and test files.
 # see documentation for the many options for specifying this.
@@ -233,40 +207,13 @@
 # You will need to have gcov and gcovr both installed to make it work.
 # For more information on these options, see docs in plugins/gcov
 :gcov:
-  :summaries: TRUE                # Enable simple coverage summaries to console after tests
-  :report_task: FALSE             # Disabled dedicated report generation task (this enables automatic report generation)
-  :utilities:
-    - gcovr           # Use gcovr to create the specified reports (default).
-    #- ReportGenerator # Use ReportGenerator to create the specified reports.
-  :reports: # Specify one or more reports to generate.
-    # Make an HTML summary report.
-    - HtmlBasic
-    # - HtmlDetailed
-    # - Text
-    # - Cobertura
-    # - SonarQube
-    # - JSON
-    # - HtmlInline
-    # - HtmlInlineAzure
-    # - HtmlInlineAzureDark
-    # - HtmlChart
-    # - MHtml
-    # - Badges
-    # - CsvSummary
-    # - Latex
-    # - LatexSummary
-    # - PngChart
-    # - TeamCitySummary
-    # - lcov
-    # - Xml
-    # - XmlSummary
+  :reports:
+    - HtmlDetailed
+  :html_report_filename: coverage_report.html
   :gcovr:
-    # :html_artifact_filename: TestCoverageReport.html
-    # :html_title: Test Coverage Report
     :html_medium_threshold: 75
     :html_high_threshold: 90
-    # :html_absolute_paths: TRUE
-    # :html_encoding: UTF-8
+    :report_include: "^../src/AS3935.c"
 
 # :module_generator:
 #   :naming: :snake #options: :bumpy, :camel, :caps, or :snake

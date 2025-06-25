@@ -49,14 +49,6 @@ struct SystemState {
 };
 
 /**
- * @brief Formats current timestamp into a buffer.
- * 
- * @param buffer Buffer to store the formatted timestamp.
- * @param size Size of the buffer.
- */
-void log_timestamp(char *buffer, size_t size);
-
-/**
  * @brief Reads a register from the AS3935 sensor via spi.
  * 
  * @param state Pointer to system state containing SPI file descriptor.

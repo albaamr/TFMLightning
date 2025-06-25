@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <time.h>
 #include "AS3935.h"
-#include "log.h"
+#include "raspi.h"
 
 #define NORMAL_MODE 0x00
 #define POWERDOWN_MODE 0x01
@@ -93,10 +93,14 @@ int __attribute__((weak)) spi_write_register(struct SystemState *state, uint8_t 
     return 0;
 }
 
+FILE * __attribute__((weak)) as3935_fopen(const char *path, const char *mode) {
+    return fopen(path, mode);
+}
+
 int as3935_init(struct SystemState *state)
 {
     if (state->log_file == NULL) {
-        state->log_file = fopen("rayos.log", "a");
+        state->log_file = as3935_fopen("rayos.log", "a");
         if (!state->log_file) {
             perror("Failed to open log file");
             return -1;
@@ -145,5 +149,5 @@ int as3935_init(struct SystemState *state)
 
     usleep(DELAY_300MS);
     printf("System initialized\n");
-
+    return 0;
 }

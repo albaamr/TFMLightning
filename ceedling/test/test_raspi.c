@@ -10,6 +10,5 @@ void tearDown(void) {
 }
 
 void test_algo_basico_de_app(void) {
-    int result = funcion_de_app_que_quieras_testear();  // cambia esto por una real
-    TEST_ASSERT_EQUAL(esperado, result);                // define el valor esperado
+    TEST_IGNORE();
 }
