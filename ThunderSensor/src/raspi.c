@@ -89,11 +89,13 @@ int handle_interrupt(struct SystemState *state, struct gpiod_line *line, struct 
         char buffer[20];
         log_timestamp(buffer, sizeof(buffer));
 
-        uint8_t event;
+        usleep(DELAY_5MS); 
+
+        uint8_t event, event_verify;
         if (spi_read_register(state, CONFIG_REG_3, &event) < 0) return -1;
         event &= 0x0F;
 
-        int timeout_ms = 100;
+        int timeout_ms = 200;
         while (gpiod_line_get_value(line) == 1 && timeout_ms-- > 0) {
             usleep(DELAY_1MS);
         }
@@ -112,6 +114,7 @@ int handle_interrupt(struct SystemState *state, struct gpiod_line *line, struct 
                 counters->noise_count++;
                 printf("Interference detected 🌩 (INT_D). Event %d - Time: %s\n", counters->noise_count, buffer);
                 fprintf(state->log_file, "%s - Interference (INT_D), Event %d\n", buffer, counters->noise_count);
+                usleep(DELAY_1s5);
                 break;
             case 0x08:
                 counters->lightning_count++;
@@ -128,6 +131,7 @@ int handle_interrupt(struct SystemState *state, struct gpiod_line *line, struct 
                     printf("Estimated distance: %d km\n", raw_distance);
                 }
                 
+                usleep(DELAY_1s);
                 break;
             default:
                 counters->noise_count++;

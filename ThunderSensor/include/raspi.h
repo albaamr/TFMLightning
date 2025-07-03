@@ -1,9 +1,3 @@
-#ifndef RASPI_H
-#define RASPI_H
-
-#include <gpiod.h>
-#include "AS3935.h"
-
 /**
  * @file raspi.h
  * @brief Header for raspi.c, provides Raspberry Pi initialization and interrupt handling.
@@ -11,6 +5,12 @@
  * @version 0.1
  * @date 21-05-2025
  */
+
+#ifndef RASPI_H
+#define RASPI_H
+
+#include <gpiod.h>
+#include "AS3935.h"
 
 #define GPIO_CHIP "/dev/gpiochip0"
 #define GPIO_IRQ 17 /**< GPIO pin used for AS3935 interrupt */

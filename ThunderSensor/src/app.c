@@ -15,14 +15,7 @@
 #include <gpiod.h>
 #include <unistd.h>
 
-/**
- * @brief Cleans up system resources.
- * 
- * @param state Pointer to system state containing SPI file descriptor and log file.
- * @param chip GPIO chip to close.
- * @param line GPIO line to release.
- */
-static void cleanup(struct SystemState *state, struct gpiod_chip *chip, struct gpiod_line *line) {
+void cleanup(struct SystemState *state, struct gpiod_chip *chip, struct gpiod_line *line) {
     if (state->log_file) {
         char buffer[20];
         log_timestamp(buffer, sizeof(buffer));
