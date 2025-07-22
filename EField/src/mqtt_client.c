@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "MQTTClient.h"
+#include "mqtt_client.h"
+
+// Configuración MQTT
+#define ADDRESS     "tcp://broker.hivemq.com:1883"
+#define CLIENTID    "RaspiFieldSensor"
+#define TOPIC       "campoElectrico/lectura"
+#define QOS         1
+#define TIMEOUT     10000L
+
+MQTTClient client;
+
+void mqtt_init(void) {
+    MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
+
+    MQTTClient_create(&client, ADDRESS, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
+
+    if (MQTTClient_connect(client, &conn_opts) != MQTTCLIENT_SUCCESS) {
+        fprintf(stderr, "Error al conectar con el broker MQTT.\n");
+        exit(EXIT_FAILURE);
+    }
+    printf("Conectado a MQTT broker en %s\n", ADDRESS);
+}
+
+void mqtt_send(float value) {
+    char payload[50];
+    snprintf(payload, sizeof(payload), "%.3f", value);
+
+    MQTTClient_message pubmsg = MQTTClient_message_initializer;
+    MQTTClient_deliveryToken token;
+
+    pubmsg.payload = payload;
+    pubmsg.payloadlen = (int)strlen(payload);
+    pubmsg.qos = QOS;
+    pubmsg.retained = 0;
+
+    printf("[TRACE] Enviando mensaje: %s\n", payload);
+
+    int rc = MQTTClient_publishMessage(client, TOPIC, &pubmsg, &token);
+    if (rc != MQTTCLIENT_SUCCESS) {
+        fprintf(stderr, "[ERROR] Error al publicar el mensaje (codigo %d)\n", rc);
+    } else {
+        MQTTClient_waitForCompletion(client, token, TIMEOUT);
+    }
+}
+
+
+void mqtt_cleanup(void) {
+    MQTTClient_disconnect(client, 10000);
+    MQTTClient_destroy(&client);
+}
