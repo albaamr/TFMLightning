@@ -12,6 +12,7 @@
         "raspi.h": "c",
         "mock_log.h": "c",
         "mock_as3935_fopen.h": "c",
-        "time.h": "c"
+        "time.h": "c",
+        "mock_test_as3935.h": "c"
     },
 }
