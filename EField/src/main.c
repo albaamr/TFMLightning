@@ -87,30 +87,19 @@ int main(void) {
     pthread_t mqtt_thread;
     pthread_create(&mqtt_thread, NULL, mqtt_task, NULL);
 
-    struct timespec start_time;
-    clock_gettime(CLOCK_REALTIME, &start_time);
-
     while (1) {
         float voltage = readVoltage(0);
 
-        struct timespec current_time;
-        clock_gettime(CLOCK_REALTIME, &current_time);
-        double t_rel = (current_time.tv_sec - start_time.tv_sec) + (current_time.tv_nsec - start_time.tv_nsec) / 1e9;
+        time_t rawtime = time(NULL);
+        struct tm *timeinfo = localtime(&rawtime);
+        char timestamp[32];
+        strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", timeinfo);
 
         // Guardar en CSV
-        fprintf(csv_file, "%.3f,%.3f\n", t_rel, voltage);
+        fprintf(csv_file, "%s,%.3f\n", timestamp, voltage);
         fflush(csv_file);
 
         buffer_push(voltage);
-        // Get current time
-        /*time_t rawtime;
-        struct tm *timeinfo;
-        char timestamp[20]; // Buffer for timestamp (YYYY-MM-DD HH:MM:SS)
-        time(&rawtime);
-        timeinfo = localtime(&rawtime);
-        strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", timeinfo);
-
-        printf("[%s] Lectura %d: Voltaje leido: %.2f\n", timestamp, ++counter, voltage);*/
     }
 
     fclose(csv_file);

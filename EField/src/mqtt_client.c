@@ -6,7 +6,7 @@
 
 // Configuración MQTT
 #define ADDRESS     "tcp://broker.hivemq.com:1883"
-#define CLIENTID    "RaspiFieldSensor"
+#define CLIENTID    "RaspiFieldSensor0"
 #define TOPIC       "campoElectrico/lectura"
 #define QOS         1
 #define TIMEOUT     10000L
@@ -18,10 +18,12 @@ void mqtt_init(void) {
 
     MQTTClient_create(&client, ADDRESS, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
 
-    if (MQTTClient_connect(client, &conn_opts) != MQTTCLIENT_SUCCESS) {
-        fprintf(stderr, "Error al conectar con el broker MQTT.\n");
+    int rc = MQTTClient_connect(client, &conn_opts);
+    if (rc != MQTTCLIENT_SUCCESS) {
+        fprintf(stderr, "Error al conectar con el broker MQTT. Código: %d\n", rc);
         exit(EXIT_FAILURE);
     }
+
     printf("Conectado a MQTT broker en %s\n", ADDRESS);
 }
 
