@@ -7,7 +7,7 @@
 // --- Configuración MQTT (ajústala si lo necesitas) ---
 #define ADDRESS         "tcp://broker.hivemq.com:1883"
 #define CLIENTID        "RaspiAS3935_0"
-#define TOPIC_LIGHTNING "alerta/lightning"
+#define TOPIC_LIGHTNING "alert/lightning"
 #define TOPIC_NOISE     "as3935/noise"
 #define TOPIC_INTERF    "as3935/interference"
 #define QOS             1
