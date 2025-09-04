@@ -8,8 +8,8 @@
 // Configuración MQTT
 #define ADDRESS     "tcp://broker.hivemq.com:1883"
 #define CLIENTID    "RaspiFieldSensor0"
-#define TOPIC       "eField/reading"
-#define ALERT_TOPIC "alert/electrostatic"
+#define TOPIC       "ThunderSystem/eField/reading"
+#define ALERT_TOPIC "ThunderSystem/alert/electrostatic"
 #define QOS         1
 #define TIMEOUT     10000L
 
