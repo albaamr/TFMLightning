@@ -2520,3 +2520,124 @@ Applied antenna tuning: TUN_CAP=8
 2025-07-03 17:38:31 - Interference (INT_D), Event 2
 2025-07-03 17:38:32 - Interference (INT_D), Event 3
 2025-07-03 17:38:34 - Interference (INT_D), Event 4
+
+--------
+Session start: 2025-09-04 12:36:53
+RC0 calibration successful
+Applied antenna tuning: TUN_CAP=9
+2025-09-04 12:37:02 - Interference (INT_D), Event 1
+2025-09-04 12:37:07 - Interference (INT_D), Event 2
+2025-09-04 12:37:29 - Interference (INT_D), Event 3
+2025-09-04 12:37:30 - Interference (INT_D), Event 4
+2025-09-04 12:37:32 - Interference (INT_D), Event 5
+
+--------
+Session start: 2025-09-04 13:18:39
+RC0 calibration successful
+Applied antenna tuning: TUN_CAP=9
+2025-09-04 13:18:40 - Interference (INT_D), Event 1
+2025-09-04 13:18:45 - Interference (INT_D), Event 2
+2025-09-04 13:18:49 - Interference (INT_D), Event 3
+
+--------
+Session start: 2025-09-04 13:20:00
+RC0 calibration successful
+Applied antenna tuning: TUN_CAP=9
+2025-09-04 13:20:00 - Interference (INT_D), Event 1
+2025-09-04 13:20:02 - Interference (INT_D), Event 2
+2025-09-04 13:20:05 - Interference (INT_D), Event 3
+2025-09-04 13:20:06 - Interference (INT_D), Event 4
+2025-09-04 13:20:08 - Interference (INT_D), Event 5
+2025-09-04 13:20:24 - Interference (INT_D), Event 6
+2025-09-04 13:20:26 - Interference (INT_D), Event 7
+2025-09-04 13:21:05 - Interference (INT_D), Event 8
+2025-09-04 13:21:09 - Interference (INT_D), Event 9
+2025-09-04 13:21:14 - Interference (INT_D), Event 10
+2025-09-04 13:21:15 - Interference (INT_D), Event 11
+2025-09-04 13:21:17 - Interference (INT_D), Event 12
+2025-09-04 13:21:18 - Interference (INT_D), Event 13
+2025-09-04 13:21:20 - Interference (INT_D), Event 14
+
+--------
+Session start: 2025-09-04 13:23:26
+RC0 calibration successful
+Applied antenna tuning: TUN_CAP=9
+2025-09-04 13:23:27 - Interference (INT_D), Event 1
+2025-09-04 13:23:30 - Interference (INT_D), Event 2
+2025-09-04 13:23:31 - Interference (INT_D), Event 3
+2025-09-04 13:23:34 - Interference (INT_D), Event 4
+2025-09-04 13:23:35 - Interference (INT_D), Event 5
+2025-09-04 13:23:37 - Interference (INT_D), Event 6
+2025-09-04 13:23:39 - Interference (INT_D), Event 7
+2025-09-04 13:23:40 - Interference (INT_D), Event 8
+2025-09-04 13:23:42 - Interference (INT_D), Event 9
+2025-09-04 13:23:44 - Interference (INT_D), Event 10
+2025-09-04 13:23:45 - Interference (INT_D), Event 11
+2025-09-04 13:23:47 - Interference (INT_D), Event 12
+
+--------
+Session start: 2025-09-04 13:29:24
+RC0 calibration successful
+Applied antenna tuning: TUN_CAP=9
+2025-09-04 13:29:26 - Interference (INT_D), Event 1
+2025-09-04 13:29:29 - Interference (INT_D), Event 2
+2025-09-04 13:29:34 - Interference (INT_D), Event 3
+2025-09-04 13:29:35 - Interference (INT_D), Event 4
+2025-09-04 13:29:37 - High noise level (INT_NH)
+2025-09-04 13:29:37 - High noise level (INT_NH)
+2025-09-04 13:29:37 - High noise level (INT_NH)
+2025-09-04 13:29:38 - High noise level (INT_NH)
+2025-09-04 13:29:38 - High noise level (INT_NH)
+2025-09-04 13:29:38 - High noise level (INT_NH)
+2025-09-04 13:29:38 - High noise level (INT_NH)
+2025-09-04 13:29:38 - High noise level (INT_NH)
+2025-09-04 13:29:38 - High noise level (INT_NH)
+2025-09-04 13:29:38 - High noise level (INT_NH)
+2025-09-04 13:29:38 - High noise level (INT_NH)
+2025-09-04 13:29:39 - High noise level (INT_NH)
+2025-09-04 13:29:39 - High noise level (INT_NH)
+2025-09-04 13:29:39 - High noise level (INT_NH)
+2025-09-04 13:29:39 - High noise level (INT_NH)
+2025-09-04 13:29:40 - High noise level (INT_NH)
+2025-09-04 13:30:23 - Interference (INT_D), Event 5
+2025-09-04 13:30:24 - Interference (INT_D), Event 6
+
+--------
+Session start: 2025-09-04 13:44:10
+RC0 calibration successful
+Applied antenna tuning: TUN_CAP=9
+2025-09-04 13:44:15 - Interference (INT_D), Event 1
+2025-09-04 13:44:35 - Interference (INT_D), Event 2
+2025-09-04 13:45:49 - Interference (INT_D), Event 3
+
+--------
+Session start: 2025-09-04 13:57:17
+RC0 calibration successful
+Applied antenna tuning: TUN_CAP=9
+2025-09-04 13:57:17 - Interference (INT_D), Event 1
+2025-09-04 13:57:23 - Interference (INT_D), Event 2
+2025-09-04 13:57:29 - Interference (INT_D), Event 3
+
+--------
+Session start: 2025-09-04 14:03:49
+RC0 calibration successful
+Applied antenna tuning: TUN_CAP=9
+2025-09-04 14:03:49 - Interference (INT_D), Event 1
+
+--------
+Session start: 2025-09-04 17:31:43
+RC0 calibration failed
+Session end: 2025-09-04 17:31:43
+
+--------
+Session start: 2025-09-04 17:31:53
+RC0 calibration failed
+Session end: 2025-09-04 17:31:53
+
+--------
+Session start: 2025-09-04 17:32:23
+RC0 calibration successful
+Applied antenna tuning: TUN_CAP=9
+2025-09-04 17:32:23 - Interference (INT_D), Event 1
+2025-09-04 17:32:38 - Interference (INT_D), Event 2
+2025-09-04 17:32:39 - Interference (INT_D), Event 3

@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <time.h>
 #include "AS3935.h"
+#include "mqtt_as3935.h"
 
 void log_timestamp(char *buffer, size_t size) {
     time_t t = time(NULL);
@@ -109,22 +110,25 @@ int handle_interrupt(struct SystemState *state, struct gpiod_line *line, struct 
             case 0x01:
                 printf("Noise level too high ⚠️ (INT_NH) - Time: %s\n", buffer);
                 fprintf(state->log_file, "%s - High noise level (INT_NH)\n", buffer);
+                mqtt_as3935_publish_noise();
                 break;
             case 0x04:
                 counters->noise_count++;
                 printf("Interference detected 🌩 (INT_D). Event %d - Time: %s\n", counters->noise_count, buffer);
                 fprintf(state->log_file, "%s - Interference (INT_D), Event %d\n", buffer, counters->noise_count);
                 usleep(DELAY_1s5);
+                mqtt_as3935_publish_interference();
                 break;
             case 0x08:
                 counters->lightning_count++;
                 uint8_t raw_distance;
                 if (spi_read_register(state, CONFIG_REG_7, &raw_distance) < 0) return -1;
                 raw_distance &= AS3935_REG_MASK;
-                
-                fprintf(state->log_file, "%s - Lightning detected (INT_L), Lightning %d, Distance: %d km\n", buffer, counters->lightning_count, raw_distance == 0x3F ? -1 : raw_distance);
-                printf("¡Lightning %i detected! ⚡ (INT_L) - Time: %s\n", counters->lightning_count, buffer);
+                int dist_km = (raw_distance == 0x3F) ? -1 : (int)raw_distance;
 
+                fprintf(state->log_file, "%s - Lightning detected (INT_L), Lightning %d, Distance: %d km\n", buffer, counters->lightning_count, dist_km);
+                printf("¡Lightning %i detected! ⚡ (INT_L) - Time: %s\n", counters->lightning_count, buffer);
+                mqtt_as3935_publish_lightning(dist_km);
                 if (raw_distance == 0x3F) { 
                     printf("Distance: Out of range (>40 km)\n");
                 } else {

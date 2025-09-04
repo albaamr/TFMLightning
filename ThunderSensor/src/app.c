@@ -10,12 +10,14 @@
 #include "app.h"
 #include "raspi.h"
 #include "AS3935.h"
+#include "mqtt_as3935.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <gpiod.h>
 #include <unistd.h>
 
 void cleanup(struct SystemState *state, struct gpiod_chip *chip, struct gpiod_line *line) {
+    mqtt_as3935_cleanup();
     if (state->log_file) {
         char buffer[20];
         log_timestamp(buffer, sizeof(buffer));
@@ -37,6 +39,8 @@ int run_lightning_detection(void) {
     struct gpiod_line *line = NULL;
     struct EventCounters counters = { .noise_count = 0, .lightning_count = 0 };
     struct gpiod_line_event event;
+
+    mqtt_as3935_init();
 
     if (systemInit(&state, &chip, &line) < 0) {
         cleanup(&state, chip, line);

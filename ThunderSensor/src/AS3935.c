@@ -11,51 +11,6 @@
 #include <time.h>
 #include "AS3935.h"
 
-#define NORMAL_MODE 0x00
-#define POWERDOWN_MODE 0x01
-
-#define AS3935_READ_MODE 0x40
-#define AS3935_WRITE_MODE 0x00
-
-#define DIRECT_COMMAND 0x96
-#define AFE_GAIN_INDOOR 0x24
-#define AFE_GAIN_OUTDOOR 0x1C
-
-#define CONFIG_WDTH_0 0x00
-#define CONFIG_WDTH_1 0x01
-#define CONFIG_WDTH_2 0x02 //Default
-#define CONFIG_WDTH_3 0x03
-#define CONFIG_WDTH_4 0x04
-#define CONFIG_WDTH_5 0x05
-#define CONFIG_WDTH_6 0x06
-#define CONFIG_WDTH_7 0x07
-#define CONFIG_WDTH_8 0x08
-#define CONFIG_WDTH_9 0x09
-#define CONFIG_WDTH_10 0x0A
-
-#define CONFIG_NFLT_0 0x00
-#define CONFIG_NFLT_1 0x10
-#define CONFIG_NFLT_2 0x20 //Default
-#define CONFIG_NFLT_3 0x30
-#define CONFIG_NFLT_4 0x40
-#define CONFIG_NFLT_5 0x50
-#define CONFIG_NFLT_6 0x60
-#define CONFIG_NFLT_7 0x70
-
-#define CONFIG_SREJ_0 0x00
-#define CONFIG_SREJ_1 0x01
-#define CONFIG_SREJ_2 0x02 //Default
-#define CONFIG_SREJ_3 0x03
-#define CONFIG_SREJ_4 0x04
-#define CONFIG_SREJ_5 0x05
-#define CONFIG_SREJ_6 0x06
-#define CONFIG_SREJ_7 0x07
-
-#define CONFIG_MIN_LIGHT_0 0x00
-#define CONFIG_MIN_LIGHT_1 0x01
-#define CONFIG_MIN_LIGHT_2 0x02 //Default
-#define CONFIG_MIN_LIGHT_3 0x03
-
 int spi_read_register(struct SystemState *state, uint8_t reg, uint8_t *value) { 
     uint8_t tx_buf[2] = { (reg & AS3935_REG_MASK) | AS3935_READ_MODE, 0x00 };  
     uint8_t rx_buf[2] = {0, 0}; 
@@ -227,5 +182,5 @@ int as3935_init(struct SystemState *state)
 
     usleep(DELAY_300MS);
     printf("System initialized\n");
-
+    return 0;
 }
